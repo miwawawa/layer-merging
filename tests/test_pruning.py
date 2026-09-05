@@ -85,6 +85,27 @@ def test_prune_mask_row_wise():
     assert int(mask.sum()) == 3                # one output row flat -> 3 entries
 
 
+def test_prune_mask_row_wise_keeps_whole_output_rows():
+    # Structured masking must drop complete output neurons, never a mix.
+    imp = np.arange(12, dtype=float).reshape(4, 3)
+    mask = prune_mask(imp, keep_ratio=0.5, row_wise=True)
+    assert mask.shape == (12,)
+    assert int(mask.sum()) == 6                             # 2 of 4 rows kept
+    rows = mask.reshape(4, 3)
+    per_row = rows.sum(axis=1)
+    assert set(per_row.tolist()) == {0, 3}                  # all-or-nothing rows
+
+
+def test_prune_mask_row_wise_flat_with_shape():
+    # prune_model passes a flat per-layer importance plus the (out, in) shape;
+    # the mask must recover whole output rows from that flat view.
+    imp = np.array([0.0, 1.0, 10.0, 11.0, 100.0, 101.0])    # 2 rows, sum-row 0 < 1
+    mask = prune_mask(imp, keep_ratio=0.5, row_wise=True, shape=(2, 3))
+    assert mask.shape == (6,)
+    # row 1 (101-sum) is kept, row 0 (1-sum) is dropped -> flat pattern 000111
+    assert mask.tolist() == [False, False, False, True, True, True]
+
+
 def test_apply_prune_pads_short_mask():
     layer = torch.nn.Linear(6, 2)              # weight has 12 elements
     mask = np.ones(6, dtype=bool)              # too short -> padded True

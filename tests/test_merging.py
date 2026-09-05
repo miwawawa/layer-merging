@@ -103,3 +103,29 @@ def test_merger_only_fuses_compatible_pairs(trained_toy_model, loaders):
     while merger.merge_once():
         pass
     assert trained_toy_model.num_layers < n0
+
+
+def test_merger_merge_log_records_history(trained_toy_model, loaders):
+    merger = LayerMerger(trained_toy_model, get_similarity("nmi", sigma=5.0, n_dims=4),
+                         get_merger("weighted"), threshold=0.05)
+    merger.set_calibration(loaders["val"], 32)
+    n_merges = merger.merge_all()
+    assert n_merges >= 1
+    assert len(merger.merge_log) == n_merges                # one record per merge
+    for record in merger.merge_log:
+        for key in ("pair", "similarity", "alpha", "params_before", "params_out"):
+            assert key in record
+    # history is strictly shrinking until the graph has nothing left to fuse
+    params = [r["params_out"] for r in merger.merge_log]
+    assert params == sorted(params, reverse=True)
+
+
+def test_slerp_antiparallel_falls_back_to_average():
+    # Opposite directions -> Omega = pi -> sin(Omega)=0 -> linear average
+    # alpha*w1 + (1-alpha)*w2 (= -0.5 for alpha=0.25 here).
+    s = SlerpMerge()
+    w1 = torch.tensor([1.0, 0.0, 0.0])
+    w2 = torch.tensor([-1.0, 0.0, 0.0])
+    out = s.fuse(w1, w2, alpha=0.25)
+    assert torch.allclose(out, 0.25 * w1 + 0.75 * w2, atol=1e-6)
+    assert torch.allclose(out, torch.tensor([-0.5, 0.0, 0.0]), atol=1e-6)

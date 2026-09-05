@@ -59,6 +59,27 @@ def test_gaussian_mi_non_negative():
     assert gaussian_mi(a, b) >= -1e-6
 
 
+def test_gaussian_mi_matches_known_1d_formula():
+    # For two standardized 1-D Gaussians with correlation rho:
+    #   I = -0.5 * ln(1 - rho^2)   (closed form, S = [[1, rho],[rho, 1]])
+    rng = np.random.default_rng(7)
+    n = 4000
+    x = rng.normal(size=(n, 1))
+    rho = 0.8
+    y = rho * x + np.sqrt(1 - rho**2) * rng.normal(size=(n, 1))
+    value = gaussian_mi(x, y)
+    expected = -0.5 * np.log(1 - rho**2)            # ~0.5108
+    assert value == pytest.approx(expected, abs=0.06)
+
+
+def test_gaussian_mi_zero_when_independent():
+    # I = 0 for uncorrelated Gaussians (sample noise keeps it tiny).
+    rng = np.random.default_rng(9)
+    a = rng.normal(size=(3000, 1))
+    b = rng.normal(size=(3000, 1))
+    assert gaussian_mi(a, b) < 0.05
+
+
 def test_cosine_similarity_matrix():
     acts = [torch.tensor(ar) for ar in (_gaussian(), _gaussian(seed=1))]
     S = CosineSimilarity().compute(acts)

@@ -16,6 +16,7 @@ def test_defaults(cfg: Config):
     assert cfg.epochs == 6
     assert cfg.merge_threshold == 0.05
     assert cfg.prune_keep_ratio == 0.5
+    assert cfg.alpha_sweep == (0.1, 0.3, 0.5, 0.7, 0.9)
     assert cfg.mnist_mirror.startswith("https://")
 
 
