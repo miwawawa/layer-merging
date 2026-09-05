@@ -15,16 +15,30 @@ import torch
 from models.base import BaseNN
 
 
-def prune_mask(importance: np.ndarray, keep_ratio: float, row_wise: bool = False) -> np.ndarray:
-    """Return boolean mask: True = keep. Unstructured or per-output-rows."""
+def prune_mask(importance: np.ndarray, keep_ratio: float, row_wise: bool = False,
+               shape: tuple | None = None) -> np.ndarray:
+    """Return boolean mask: True = keep. Unstructured or per-output-rows.
+
+    * unstructured: keep the ``keep_ratio`` *largest* scores in the flattened
+      array (SparC3's global weight masking);
+    * row-wise: scores are grouped by output neuron (rows of the weight matrix
+      ``(out, in)``); a whole row survives if its summed score ranks in the top
+      ``keep_ratio`` rows, so pruned units are removed completely (structured).
+
+    ``shape`` is only needed when ``importance`` is flat (the per-layer arrays
+    returned by the importance scorers) and ``row_wise=True``: it reshapes the
+    scores to ``(out, in)`` before row-ranking.
+    """
     if row_wise:
-        rows, cols = importance.reshape(-1, 1).shape
-        row_scores = np.abs(importance.reshape(rows, cols))
+        rows, cols = (importance.shape if importance.ndim == 2
+                      else shape if shape is not None else (importance.size, 1))
+        scores = importance.reshape(rows, cols)
+        row_scores = np.abs(scores).sum(axis=1)             # per-output-neuron score
         keep_rows = int(keep_ratio * rows) if keep_ratio < 1 else rows
-        top = np.argsort(row_scores, axis=0)[-keep_rows:][:, 0]
-        mask = np.zeros(rows, dtype=bool)
-        mask[top] = True
-        return np.repeat(mask, cols)
+        top = np.argsort(row_scores)[-keep_rows:]
+        row_mask = np.zeros(rows, dtype=bool)
+        row_mask[top] = True
+        return np.repeat(row_mask, cols)                    # flat, aligned with weight
     keep = int(keep_ratio * importance.size) if keep_ratio < 1 else importance.size
     top = np.argsort(importance)[-keep:]
     mask = np.zeros(importance.size, dtype=bool)
@@ -35,16 +49,18 @@ def prune_mask(importance: np.ndarray, keep_ratio: float, row_wise: bool = False
 def apply_prune(layer: torch.nn.Module, mask_flat: np.ndarray) -> int:
     """Zero out weights behind a flat mask; returns number of kept params.
 
-    If the mask is shorter than the weight (defensive), unpadded positions
-    are kept and logged as-is.
+    Only the *weights* are masked; biases are intentionally left untouched
+    (biases are few, non-redundant, and SparC3's selection set is the weight
+    tensors). Write goes through an explicit copy so the source tensor is
+    never aliased in-place under autograd's view machinery.
     """
-    w_flat = layer.weight.reshape(-1)
-    w_size = w_flat.numel()
+    w_size = layer.weight.numel()
     mask = mask_flat[:w_size]
     if mask.size < w_size:
         mask = np.pad(mask, (0, w_size - mask.size), constant_values=True)
+    mask_t = torch.from_numpy(mask.astype(np.float32)).reshape_as(layer.weight)
     with torch.no_grad():
-        w_flat.copy_(torch.from_numpy(mask.astype(np.float32)) * w_flat)
+        layer.weight.data.copy_(layer.weight.detach() * mask_t)
     return int(mask.sum())
 
 
@@ -54,7 +70,8 @@ def prune_model(model: BaseNN, importances: List[np.ndarray], keep_ratio: float,
     kept = 0
     for layer, imp in zip(list(model.linears) + [model.output], importances):
         n_w = layer.weight.numel()
-        mask = prune_mask(imp[:n_w], keep_ratio, row_wise=row_wise)
+        mask = prune_mask(imp[:n_w], keep_ratio, row_wise=row_wise,
+                          shape=layer.weight.shape)
         kept += apply_prune(layer, mask)
     return kept
 
