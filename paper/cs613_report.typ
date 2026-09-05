@@ -229,8 +229,8 @@ which does not exist under the residual block $h = h + "act"(W h)$. Both negativ
 *Risks.* (i) Reproduction scope: real diffusion-map NMI on full ImageNet-scale nets was
 out of range — we evaluate the *same algorithms* on a from-scratch MNIST MLP, which is
 what the assignment permits. (ii) Latency is wall-clock/noisy — we always report FLOPs and
-params as the robust reduction metrics, latency as indicative (seed-42 speedup 2.0–3.4×,
-all ≥ 1×).
+params as the robust reduction metrics, latency as indicative (speedup measurements ranged
+2.05–6.2× across runs, all ≥ 1×).
 
 == 8. Limitations
 (i) MNIST-only; (ii) latency measured on shared CPU and noisy; (iii) magnitude pruning

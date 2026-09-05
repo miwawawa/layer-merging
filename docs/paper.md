@@ -274,7 +274,7 @@ tracks (evidence table [reproduce] = `artifacts/reproduce_table.png`):
 | merge accuracy before → after | .9775 → .9706 | .9799 → .9727 | .9785 → .9717 | → **99.29% ± 0.02% retention** |
 | params saved (merge) | 42.3% | 42.3% | 42.3% | **42.29% ± 0.00%** |
 | FLOPs saved (merge) | 42.2% | 42.2% | 42.2% | **42.24% ± 0.00%** |
-| latency speedup (merge, noisy) | 3.4× | — | — | **2.67× ± 0.74** |
+| latency speedup (merge, noisy) | 2.05× | — | — | **1.99× ± 1.20** |
 | prune accuracy before → after | .9760 → .7330 | .9785 → .7804 | .9776 → .6493 | → **73.76% ± 6.77% retention** |
 | prune sparsity | 49.9% | 49.9% | 49.9% | **49.87% ± 0.00%** |
 
