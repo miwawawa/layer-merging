@@ -64,3 +64,5 @@ LRP finds **sparser** circuits than Wanda / gradient / activation baselines.
 | Weight-importance scoring | `pruning/importance.py` |
 | Mask + apply (prune) | `pruning/pruner.py` |
 | Compare LRP-prune vs random-prune | `experiments/phase5_pruning.py` |
+
+> Full step-by-step numbers on *our* MNIST runs: `docs/learning/04_sparc3_calculations.md`.

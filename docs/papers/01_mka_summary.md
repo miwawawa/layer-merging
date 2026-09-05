@@ -59,6 +59,8 @@ terms of covariance determinants, and the NMI is
 implements the Gaussian-NMI form** (`src/similarity/gaussian_mi.py`) — identical
 in spirit to the NPIB and reference-implementation's default.
 
+> Full step-by-step numbers on *our* MNIST runs: `docs/learning/02_mka_calculations.md`.
+
 ### Step D — Merge loop (Algorithm 1)
 ```
 while a pair (l,m) with S_lm ≥ threshold τ exists:

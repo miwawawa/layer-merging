@@ -61,3 +61,7 @@ and general visual understanding also improves. Outperforms existing
 | SLERP fusion | `merging/slerp.py` |
 | Structural matching (weights) | `similarity/cosine.py` on weights |
 | Semantic matching (activations) | `similarity/` on activations |
+
+> Full step-by-step numbers on *our* MNIST runs: `docs/learning/03_com_calculations.md`.
+> Note: Buzzega et al. arXiv:2508.21421 is a *different* "CoM" (LLM-expert
+> chaining); see `docs/learning/05_related_work_calculations.md` §7.
