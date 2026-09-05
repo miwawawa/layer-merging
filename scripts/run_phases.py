@@ -18,8 +18,10 @@ PHASES = [
     "phase2_similarity",
     "phase3_merging",
     "phase4_strategies",
+    "phase4b_alpha_sweep",
     "phase5_pruning",
     "phase6_pipeline",
+    "phase6b_hybrid",
 ]
 
 

@@ -67,6 +67,7 @@ class Config:
     merge_max_alpha: float = 0.9
     merge_threshold: float = 0.05              # pairs below this similarity are skipped
     merge_strategies: tuple = ("weighted", "uniform", "slerp")   # phase-4 comparison
+    alpha_sweep: tuple = (0.1, 0.3, 0.5, 0.7, 0.9)  # phase-4b ablation: α on the grid
 
     # --- Pruning (SparC3 paper) -------------------------------------------------
     lrp_eps: float = 1e-2                      # epsilon-stabilized LRP denominator
@@ -99,6 +100,10 @@ class Config:
         "merge_curve": "merge_curve.png",
         "phase4_results": "phase4_strategies.json",
         "strategies_fig": "strategies.png",
+        "alpha_sweep_results": "phase4b_alpha_sweep.json",
+        "alpha_sweep_fig": "alpha_sweep.png",
+        "hybrid_results": "phase6b_hybrid.json",
+        "hybrid_fig": "hybrid_tracks.png",
         "phase5_results": "phase5_pruning.json",
         "pruning_curves": "pruning_curves.png",
         "final_csv": "final_results.csv",

@@ -242,6 +242,65 @@ def gantt(tasks, starts, durations, path: str) -> str:
 
 
 # --------------------------------------------------------------------------
+# ablations (phase 4b alpha sweep, phase 6b hybrid) and reduce-to-table helpers
+# --------------------------------------------------------------------------
+
+def alpha_sweep_plot(alphas, accs, baseline_acc: float, path: str) -> str:
+    """α vs post-merge accuracy, with the no-merge baseline as a dashed line."""
+    fig, ax = plt.subplots(figsize=(5.2, 3.4))
+    ax.plot(alphas, accs, marker="o", color="#4C72B0", linewidth=2)
+    ax.axhline(baseline_acc, color="#C44E52", linestyle="--", linewidth=1.5,
+               label=f"no-merge baseline {100 * baseline_acc:.2f}%")
+    for x, y in zip(alphas, accs):
+        ax.annotate(f"{100 * y:.2f}%", (x, y), textcoords="offset points",
+                    xytext=(4, 8), fontsize=7)
+    ax.set_xlabel("Mixing weight $\\alpha$")
+    ax.set_ylabel("Test accuracy")
+    ax.set_title("α-ablation — one merged pair at each α")
+    ax.legend(fontsize=8, loc="lower left")
+    ax.grid(alpha=0.3)
+    plt.tight_layout()
+    return save(fig, path)
+
+
+def hybrid_bars(rows: List[dict], path: str) -> str:
+    """Grouped bars for the cross-track feasibility ablation (phase 6b).
+
+    The residual group has no 'merged + LRP' bar: run-time LRP on a residual
+    stream is structurally undefined (the honest finding), so that entry has
+    ``acc=None`` and is rendered as a hatched 'n/a' column instead.
+    """
+    plain, residual = rows[:3], rows[3:5]
+    stages = [r["stage"] for r in plain]
+    fig, ax = plt.subplots(figsize=(7.6, 3.7))
+    width = 0.38
+    groups = [("plain", plain, "#4C72B0", 0.0),
+              ("residual", residual + [None], "#55A868", width)]
+    for label, slice_, color, off in groups:
+        xs = np.arange(len(stages)) + off
+        accs = [r["acc"] if r else None for r in slice_]
+        bars = ax.bar(xs, [a if a is not None else 0.0 for a in accs], width,
+                      label=label, color=color)
+        for b, a in zip(bars, accs):
+            if a is None:
+                b.set_hatch("///")
+                ax.text(b.get_x() + b.get_width() / 2, 0.35, "n/a",
+                        ha="center", va="center", fontsize=7, rotation=90)
+            else:
+                ax.text(b.get_x() + b.get_width() / 2, a + 0.003,
+                        f"{100 * a:.1f}%", ha="center", fontsize=7)
+    ax.set_xticks(np.arange(len(stages)) + width / 2)
+    ax.set_xticklabels(stages, rotation=12, ha="right", fontsize=8)
+    ax.set_ylabel("Test accuracy")
+    ax.set_ylim(0, 1.0)
+    ax.set_title("Cross-track feasibility — merging vs pruning on each graph")
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.3)
+    plt.tight_layout()
+    return save(fig, path)
+
+
+# --------------------------------------------------------------------------
 # small formatters shared by the table figure
 # --------------------------------------------------------------------------
 
