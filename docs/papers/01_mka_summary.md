@@ -39,14 +39,25 @@ For calibration data `ω`, run the model and record the activation `H^l` of ever
    `Φ_t(i) = (λ₂ᵗ φ₂(i), …, λ_{k+1}ᵗ φ_{k+1}(i))`
    → `Ψ^l` is the embedding of layer `l`. Euclidean distance in this space ≈ diffusion distance (manifold geometry preserved).
 
-### Step C — Normalized Mutual Information (NMI) similarity
-Assume `Ψ^l`, `Ψ^m` are **jointly Gaussian**. Then MI has closed form:
-`I(Ψ^l; Ψ^m) = ½·ln(|Σ_l|·|Σ_m| / |Σ_{l,m}|)`
+### Step C — Layer similarity (NPIB → Gaussian NMI)
 
-Normalize by individual entropies (Gaussian entropy `H = ½ln((2πe)^d |Σ|)`):
+The paper's headline metric is the **Normalized Pairwise Information
+Bottleneck (NPIB)** — a normalized mutual-information score over the diffusion
+embeddings `E^i, E^j` (paper Eq. 3):
+
+`S_ij = NPIB(E^i, E^j) = Σ_ij p(x,y)·log(p(x,y)/(p(x)p(y))) / sqrt( Σ_x p(x)log p(x) · Σ_y p(y)log p(y) )`
+
+The formal appendix (v2/v3) makes the same score concrete: assume the diffusion
+embeddings `Ψ^l`, `Ψ^m` are **jointly Gaussian**, then MI has a closed form in
+terms of covariance determinants, and the NMI is
+
+`I(Ψ^l; Ψ^m) = ½·ln(|Σ_l|·|Σ_m| / |Σ_{l,m}|)`, with `H(Ψ) = ½·ln((2πe)^d |Σ|)`, and
+
 `S_lm = I(Ψ^l; Ψ^m) / sqrt(H(Ψ^l)·H(Ψ^m))`
 
-`S_lm ∈ [0,1]`: 1 = identical layers, 0 = unrelated layers.
+`S_lm ∈ [0,1]`: 1 = identical layers, 0 = unrelated layers. **Our repo
+implements the Gaussian-NMI form** (`src/similarity/gaussian_mi.py`) — identical
+in spirit to the NPIB and reference-implementation's default.
 
 ### Step D — Merge loop (Algorithm 1)
 ```
