@@ -20,7 +20,7 @@ from utils.viz import strategies_bars
 def run_strategy(name: str, model, loaders, cfg):
     clone = deepcopy(model)                              # fair: same starting weights
     merger = LayerMerger(clone, make_similarity(cfg), make_merger(name, cfg),
-                         threshold=cfg.merge_threshold)
+                         threshold=cfg.merge_threshold, cfg=cfg)
     merger.set_calibration(loaders["val"], cfg.n_calibration_samples)
     done = merger.merge_once()
     acc = evaluate(clone, loaders["test"])

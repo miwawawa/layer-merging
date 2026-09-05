@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "src"))
 
 from config.default import Config
-from evaluation.metrics import accuracy_delta, count_parameters, summarize
+from evaluation.metrics import summarize
 from experiments.common import make_merger, make_similarity, setup
 from merging.merger import LayerMerger
 from pruning.importance import LRPImportance
@@ -37,7 +37,7 @@ def run_seed(seed: int, cfg: Config, keep_ratio: float) -> dict:
     model, loaders, cfg = setup(seed=seed)
     base = summarize(model, loaders["test"])
     merger = LayerMerger(model, make_similarity(cfg), make_merger("weighted", cfg),
-                         threshold=cfg.merge_threshold)
+                         threshold=cfg.merge_threshold, cfg=cfg)
     merger.set_calibration(loaders["val"], cfg.n_calibration_samples)
     n_merges = merger.merge_all()
     merged = summarize(model, loaders["test"], merges=n_merges)

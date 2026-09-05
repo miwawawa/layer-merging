@@ -25,16 +25,21 @@ from similarity.protocol import LayerSimilarity
 
 class LayerMerger:
     def __init__(self, model: BaseNN, similarity: LayerSimilarity,
-                 strategy: MergeStrategy, threshold: float | None = None):
-        # Similarity above which a compatible pair is worth fusing. The value
-        # is not hardcoded here: None falls back to the single configured
-        # ``Config.merge_threshold``.
+                 strategy: MergeStrategy, threshold: float | None = None,
+                 cfg: Config | None = None):
+        # Similarity above which a compatible pair is worth fusing. When the
+        # caller already has a Config (experiments always do), reuse it —
+        # config comes from ONE place, never rebuilt per instance.
+        if cfg is not None:
+            self.threshold = (cfg.merge_threshold if threshold is None else threshold)
+        else:
+            self.threshold = (Config().merge_threshold if threshold is None else threshold)
         self.model = model
         self.similarity = similarity
         self.strategy = strategy
-        self.threshold = (Config().merge_threshold if threshold is None else threshold)
-        self.py_params_before = None
-        self.py_params_after = None
+        #: Full history of every merge: a list of records with the same schema
+        #: as :attr:`last_merge` plus ``params_before`` (evidence for the paper).
+        self.merge_log: List[dict] = []
         #: Diagnostic record of the most recent merge (None before any merge):
         #: ``{"pair": (i, j), "similarity": s, "alpha": alpha, "params_out": int}``.
         self.last_merge: dict | None = None
@@ -47,10 +52,13 @@ class LayerMerger:
         if i is None or s < self.threshold:
             return False
         alpha = self._alpha(S, i, j)
+        params_before = sum(p.numel() for p in self.model.parameters())
         self._fuse(i, j, alpha)
         self.last_merge = {"pair": (i, j), "similarity": round(float(s), 6),
                            "alpha": round(float(alpha), 6),
+                           "params_before": params_before,
                            "params_out": sum(p.numel() for p in self.model.parameters())}
+        self.merge_log.append(self.last_merge)
         return True
 
     def merge_all(self) -> List[int]:

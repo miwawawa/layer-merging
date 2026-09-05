@@ -17,8 +17,7 @@ from copy import deepcopy
 import torch
 
 from experiments.common import setup, make_similarity, make_merger
-from evaluation.metrics import (accuracy_delta, count_parameters, evaluate,
-                                nonzero_parameters, summarize)
+from evaluation.metrics import nonzero_parameters, summarize
 from merging.merger import LayerMerger
 from pruning.importance import LRPImportance
 from pruning.pruner import prune_model_global
@@ -31,7 +30,7 @@ def track_merge(cfg, loaders):
     before = summarize(model, loaders["test"], stage="Residual baseline",
                        arch="residual", merges=0)
     merger = LayerMerger(model, make_similarity(cfg), make_merger("weighted", cfg),
-                         threshold=cfg.merge_threshold)
+                         threshold=cfg.merge_threshold, cfg=cfg)
     merger.set_calibration(loaders["val"], cfg.n_calibration_samples)
     n_merges = merger.merge_all()
 

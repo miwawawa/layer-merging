@@ -23,7 +23,7 @@ def main():
     n0 = count_parameters(model)
 
     merger = LayerMerger(model, make_similarity(cfg), get_merger("weighted"),
-                         threshold=cfg.merge_threshold)
+                         threshold=cfg.merge_threshold, cfg=cfg)
     merger.set_calibration(loaders["val"], cfg.n_calibration_samples)
 
     curve = [{"merges": 0, "acc": baseline_acc, "params": n0, "drop": 0.0,
