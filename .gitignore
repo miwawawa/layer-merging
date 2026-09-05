@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+
+# Env (never commit real overrides)
+.env
+
+# Downloaded data + generated results (configurable via LAYER_MERGING_DATA_DIR / ARTIFACTS_DIR)
+data/
+artifacts/
+notebooks/data/
+notebooks/artifacts/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
