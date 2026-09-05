@@ -5,7 +5,7 @@
 PYTHON ?= python3
 SCRIPTS := scripts
 
-.PHONY: help setup env test smoke phases reproduce run-notebooks report run-all clean
+.PHONY: help setup env test verify smoke phases reproduce run-notebooks report run-all clean
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -23,7 +23,9 @@ test: ## Run the pytest suite (fast, toy-sized models — no MNIST download)
 smoke: ## Quick module-level smoke test (no MNIST needed)
 	$(PYTHON) $(SCRIPTS)/smoke_test.py
 
-phases: ## Full reproduction: run all six experiment phases on MNIST
+verify: test smoke ## Fast gate: unit tests + smoke, run before every commit/push
+
+phases: ## Full reproduction: run all eight experiment phases on MNIST
 	$(PYTHON) $(SCRIPTS)/run_phases.py
 
 reproduce: ## Multi-seed reproduction (mean±std evidence for the report)
