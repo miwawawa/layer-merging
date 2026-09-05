@@ -24,11 +24,12 @@ make setup            # pip install -r requirements.txt
 make env              # copies .env.example -> .env (optional overrides)
 
 # 2. fast verification (toy models, no MNIST download, < 1 min)
-make test             # 70+ pytest tests
+make test             # 70+ pytest tests (currently 78)
 make smoke            # module-level smoke test
+make verify           # test + smoke — the pre-push gate
 
 # 3. full reproduction on MNIST (downloads under data/ via the configured mirror)
-make phases           # runs experiments/phase1..6 -> artifacts/
+make phases           # runs experiments/phase1..6b -> artifacts/
 make reproduce        # multi-seed evidence (mean ± std) for the report
 make run-notebooks    # proves the Colab notebooks execute end-to-end
 make report           # compiles paper/cs613_report.typ -> CS613_Layer_Merging_Report.pdf
@@ -55,7 +56,7 @@ src/
   pruning/{lrp,importance,pruner}.py
   evaluation/metrics.py  # accuracy, FLOPs, size, latency, sparsity, summarize()
   training.py            # shared train loop (optimizer/loss from Config)
-  experiments/phase1..6  # the six experiment phases
+  experiments/phase1..6b # the eight experiment phases + 2 ablations
 scripts/                 # smoke test, phase runner, multi-seed reproduce, notebooks
 tests/                   # pytest suite (unit + integration)
 notebooks/               # Colab-compatible per-phase notebooks
@@ -68,8 +69,12 @@ docs/                    # paper draft, methodology, survey, rubric, guidelines
 - `other_approaches.md` — survey of alternative compression/merging approaches.
 - `papers/*.md` — the three assignment papers summarized; `research_survey.md`
   separates implementable from ongoing research.
+- **`learning/` — study path: from first-principles math to paper numbers to
+  code** (`00_roadmap.md` → `01_math_primer.md` → paper calculation walk-throughs
+  `02/03/04` → related-work notes `05` → coding-concepts guide `06` → runnable
+  repo tour `07_code_tour.py`: `python docs/learning/07_code_tour.py`).
 
-### The six phases (report results live in `artifacts/`)
+### The eight phases (report results live in `artifacts/`)
 1. **Baseline** — train/load the residual MLP on MNIST (≈97.8%, 466,698 params)
    + footprint snapshot (FLOPs, size, latency).
 2. **Similarity** — layer redundancy heatmaps (NMI vs cosine) → `similarity_all.png`.
@@ -77,17 +82,22 @@ docs/                    # paper draft, methodology, survey, rubric, guidelines
    params curve → `merge_curve.png`.
 4. **Strategies** — weighted (MKA) vs uniform vs SLERP (CoM), one merge each →
    `strategies.png`.
+4b. **α-ablation** — same pair at every α on the grid; pair choice > weight →
+   `alpha_sweep.png`.
 5. **Pruning** — LRP vs magnitude vs random sparsity sweep →
    `pruning_curves.png`.
 6. **Pipeline** — two compression tracks (residual merging + plain LRP pruning)
    with FULL before/after metrics → `results_table.png` + `final_results.csv`
    + Gantt chart.
+6b. **Feasibility** — honest no-go evidence (merge collapses plain; LRP undefined
+   on residual) → `hybrid_tracks.png`.
 
 ### Evidence the report shows (what the reduction looks like)
 - **Merging**: 466,698 → 269,322 params (−42.3%), −42.2% FLOPs, 4→1 hidden
   layers, 0.9775 → 0.9706 accuracy (>99% retention), per-merge α/S recorded.
 - **Pruning**: 50% sparsity at 75% retention (LRP), vs random 66% — LRP wins
   everywhere, magnitude even higher on clean MNIST (honest nuance reported).
+- **α-ablation**: five α's land within ±0.0005 accuracy — pair choice dominates.
 - **Multi-seed mean ± std** for both tracks (`reproduce_table.png`).
 
 ### Key finding

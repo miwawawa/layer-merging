@@ -41,8 +41,10 @@ src/
     ├── phase2_similarity.py  #   layer redundancy heatmaps (NMI + cosine)
     ├── phase3_merging.py     #   greedy α=S_lm merge curve (acc vs compression)
     ├── phase4_strategies.py  #   weighted vs uniform vs SLERP, one merge each
+    ├── phase4b_alpha_sweep.py#   α-ablation (pair > weight evidence)
     ├── phase5_pruning.py     #   LRP vs magnitude vs random sparsity sweep
     └── phase6_pipeline.py    #   merging track + pruning track → final_results.csv
+    └── phase6b_hybrid.py     #   why the two tracks can't live on one model
 
 scripts/   smoke_test.py · run_phases.py · reproduce.py · build_notebooks.py · run_notebooks.py
 tests/     pytest suite (unit per module + toy integration)

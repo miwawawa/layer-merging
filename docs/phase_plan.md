@@ -6,7 +6,7 @@ Assignment deadline: **Sunday, Sep 06, 2026, 11:59 PM**
 > Each `docs/papers/*` file feeds a report section; each `experiments/phase_*.py`
 > feeds a report figure/table.
 
-## Track E — Experiments (each phase = 1 notebook + 1 script)
+## Track E — Experiments (phases 1–6 have a notebook + script; 4b/6b are script-only ablations)
 
 | Phase | Focus | Source module(s) | Deliverable |
 |---|---|---|---|
@@ -14,9 +14,12 @@ Assignment deadline: **Sunday, Sep 06, 2026, 11:59 PM**
 | **2. Similarity** | Layer redundancy (Diffusion map + NMI vs cosine) | `similarity/` | heatmaps + 2×2 grid (`similarity_all.png`) |
 | **3. Merging** | Greedy α=S_lm merging, per-merge pair+α evidence | `merging/` | `phase3_merge_curve.json` + `merge_curve.png` |
 | **4. Strategies** | Weighted vs uniform vs SLERP (same pair, α recorded) | `merging/` | `phase4_strategies.json` + `strategies.png` |
+| **4b. α-ablation** | Same pair fused at each α on the grid | `merging/` `config/` | `phase4b_alpha_sweep.json` + `alpha_sweep.png` |
 | **5. Pruning** | LRP vs magnitude vs random sweep | `pruning/` | `phase5_pruning.json` + `pruning_curves.png` |
 | **6. Pipeline** | Two tracks end-to-end: full-metric evidence table | everything | `final_results.csv/json` + `results_table.png` + Gantt |
+| **6b. Feasibility** | Honest no-go evidence: merge-on-plain collapses, LRP-on-residual undefined | `pruning/` `merging/` | `phase6b_hybrid.json` + `hybrid_tracks.png` |
 | **Reproduce** | Multi-seed aggregation (mean±std) | `scripts/reproduce.py` | `reproduce_summary.csv/json` + `reproduce_table.png` |
+| **. Preface** | Learning path: math primer → per-paper numbers → code | `docs/learning/` | `00_roadmap` … `07_code_tour.py` |
 
 ## Track R — Report (maps to the 50% rubric)
 
@@ -41,8 +44,8 @@ Assignment deadline: **Sunday, Sep 06, 2026, 11:59 PM**
 4. Note down numbers + figures → paste into report (artifacts live in `artifacts/`).
 
 Every tunable is a Config field (`src/config/default.py`), overridable via `.env`
-(`make env`). The full suite of tests runs with `make test`; the module-level
-sanity check is `make smoke`. On a fresh clone: `make setup && make test`.
+(`make env`). The full suite of tests runs with `make test`; the pre-push gate is
+`make verify` (tests + module smoke). On a fresh clone: `make setup && make test`.
 
 ## Resource estimate
 
