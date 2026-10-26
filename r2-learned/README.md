@@ -8,7 +8,7 @@ Two **different methods** were developed and evaluated. The experiments used GPT
 
 **Important:** Although the two approaches use the same model family and output size, they have different sampling and evaluation settings. Compare each method with its **own** uncompressed GPT-2 and removal control; the absolute PPL numbers below are **not a standardized head-to-head comparison**.
 
-## Approach A — Teacher-guided nonlinear replacement (Hiroyoshi)
+## Approach A — Teacher-guided nonlinear replacement
 
 ### Idea
 
@@ -45,11 +45,12 @@ At five merges, absolute PPL was **59.81 (DBpedia), 115.97 (AG News), and 66.03 
 
 **Finding:** Learned nonlinear replacement outperformed its removal baseline on **all three datasets for three through five compression operations**. Results at one or two merges were mixed.
 
-**Code**
-- [`Hiroyoshi/single_merge.ipynb`](Hiroyoshi/single_merge.ipynb): initial single-pair experiments.
-- [`Hiroyoshi/multi_merge.ipynb`](Hiroyoshi/multi_merge.ipynb): repeated greedy pair selection, training, evaluation, and checkpoint export.
+**Code and final results**
+- [Final PPL and merge-plan results (reformatted PDF)](nonlinear-merge/Final_Results.pdf): 15 comparison rows and the five-merge selection table from the team's submitted result sheet.
+- [`nonlinear-merge/single_merge.ipynb`](nonlinear-merge/single_merge.ipynb): initial single-pair experiments.
+- [`nonlinear-merge/multi_merge.ipynb`](nonlinear-merge/multi_merge.ipynb): repeated greedy pair selection, training, evaluation, and checkpoint export.
 
-## Approach B — Learned weight-space merger (Amrita)
+## Approach B — Learned weight-space merger
 
 ### Idea
 
@@ -80,11 +81,11 @@ At five merges, absolute PPL was **70.41 (DBpedia), 139.15 (AG News), and 68.23 
 **Finding:** Learned weight-space merging improves on its own drop-first control at **three through five merges on all three datasets**; one- and two-merge comparisons include small exceptions.
 
 **Code and results**
-- [`Amrita/weight_merge_v1.ipynb`](Amrita/weight_merge_v1.ipynb): earlier weight-merger implementation.
-- [`Amrita/weight_merge_v2.ipynb`](Amrita/weight_merge_v2.ipynb): subsequent iteration.
-- [`Amrita/pair_merge_early.ipynb`](Amrita/pair_merge_early.ipynb): earlier exploration.
-- [`Amrita/weight_merge_results.pdf`](Amrita/weight_merge_results.pdf): reported comparison table and selected pairs.
-- [`Amrita/weight_merge_results.csv`](Amrita/weight_merge_results.csv): experiment records.
+- [`weight-merge/weight_merge_v1.ipynb`](weight-merge/weight_merge_v1.ipynb): earlier weight-merger implementation.
+- [`weight-merge/weight_merge_v2.ipynb`](weight-merge/weight_merge_v2.ipynb): subsequent iteration.
+- [`weight-merge/pair_merge_early.ipynb`](weight-merge/pair_merge_early.ipynb): earlier exploration.
+- [`weight-merge/weight_merge_results.pdf`](weight-merge/weight_merge_results.pdf): reported comparison table and selected pairs.
+- [`weight-merge/weight_merge_results.csv`](weight-merge/weight_merge_results.csv): experiment records.
 
 ## Reproducibility and limitations
 
@@ -98,4 +99,4 @@ At five merges, absolute PPL was **70.41 (DBpedia), 139.15 (AG News), and 68.23 
 
 The first study showed that deleting a redundant layer can be surprisingly effective and that naive averaging is usually a poor replacement. These learned approaches **surpass the relevant deletion control at higher compression** without restoring the uncompressed model's full performance. This motivates further work on merge selection, multi-merge interactions, and end-to-end functional objectives.
 
-The numerical results above are taken from the supplied experiment summaries and accompanying notebooks. The folders retain the individual researcher names for code attribution.
+The results are from the team's experimental summaries and associated notebooks. Both methods were investigated as part of the collaborative research project; directory names describe approaches rather than individual contributors.

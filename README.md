@@ -66,7 +66,7 @@ The affine replacement changes the architecture more than simple block deletion;
 
 The second phase tested two distinct approaches against direct removal and other training-free baselines. Both evaluated models after **1–5** merge operations.
 
-#### Approach A — Sequential nonlinear merging (Hiroyoshi)
+#### Approach A — Sequential nonlinear merging
 
 **Concept:** For adjacent transformations `Φ₁` and `Φ₂`, train a replacement Transformer block `M` so that `M(x) ≈ Φ₂(Φ₁(x))` and the final next-token distribution remains close to the original model.
 
@@ -94,9 +94,9 @@ At five merges, the trained model recorded PPL of **59.81 / 115.97 / 66.03** (DB
 
 **Interpretation:** The learned replacement was not always best at one or two merges, but improved over direct removal on all three datasets at **three through five merges**. Greedy stage-wise search does not guarantee a globally optimal merge plan.
 
-**Implementation:** [One-layer experiments](r2-learned/Hiroyoshi/single_merge.ipynb) · [Two-to-five-layer experiments](r2-learned/Hiroyoshi/multi_merge.ipynb)
+**Implementation and final results:** [Final results (PDF)](r2-learned/nonlinear-merge/Final_Results.pdf) · [One-layer experiments](r2-learned/nonlinear-merge/single_merge.ipynb) · [Two-to-five-layer experiments](r2-learned/nonlinear-merge/multi_merge.ipynb)
 
-#### Approach B — Learned weight-space merging (Amrita)
+#### Approach B — Learned weight-space merging
 
 **Concept:** Train a **shared neural network in weight space** to generate a replacement from two adjacent pretrained blocks. Unlike Approach A, this method does not retrain a new replacement independently for each compression step.
 
@@ -123,7 +123,7 @@ At five merges, learned PPL was **70.41 / 139.15 / 68.23**, versus uncompressed 
 
 **Interpretation:** The learned weight generator improved over its removal baseline on all three datasets at **three through five merges**. Pair selection uses a single-pair cost proxy and does not guarantee the best combined multi-pair PPL.
 
-**Implementation and results:** [Amrita's notebooks](r2-learned/Amrita/) · [Detailed results PDF](r2-learned/Amrita/weight_merge_results.pdf) · [CSV results](r2-learned/Amrita/weight_merge_results.csv)
+**Implementation and results:** [Weight-merging notebooks](r2-learned/weight-merge/) · [Detailed results PDF](r2-learned/weight-merge/weight_merge_results.pdf) · [CSV results](r2-learned/weight-merge/weight_merge_results.csv)
 
 ### A note about comparing these approaches
 
@@ -152,12 +152,12 @@ The two research stages are organized by method:
 | Stage | Code and results |
 |---|---|
 | **R1 — Baselines and affine replacement** | [`r1-baselines/`](r1-baselines/) — direct deletion, averaging, fitted affine maps, adjacent-pair sweeps, [detailed README](r1-baselines/README.md) |
-| **R2A — Nonlinear replacement blocks** | [`r2-learned/Hiroyoshi/`](r2-learned/Hiroyoshi/) — one- and multi-merge teacher-guided notebooks |
-| **R2B — Learned weight merger** | [`r2-learned/Amrita/`](r2-learned/Amrita/) — weight-merger notebooks, [results PDF](r2-learned/Amrita/weight_merge_results.pdf), and CSV |
+| **R2A — Nonlinear replacement blocks** | [`r2-learned/nonlinear-merge/`](r2-learned/nonlinear-merge/) — teacher-guided notebooks and the final results PDF |
+| **R2B — Learned weight merger** | [`r2-learned/weight-merge/`](r2-learned/weight-merge/) — weight-merger notebooks, [results PDF](r2-learned/weight-merge/weight_merge_results.pdf), and CSV |
 | **Detailed R2 findings** | [`r2-learned/README.md`](r2-learned/README.md) |
 | **Original code attribution** | [`PROVENANCE.md`](PROVENANCE.md) |
 
-The original research materials were sourced from the collaborative repository [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging). The source remains unchanged. Only the initial baseline code and the learned approaches by Hiroyoshi and Amrita are retained here.
+The research was conducted collaboratively by the project team. The repository preserves the baseline study and two selected learned-merging methods; the method-based folders do not indicate individual ownership. The source code archive [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging) remains unchanged.
 
 The notebooks are research artifacts. The R1 package includes a run script; the R2 notebooks require individual GPU setups and do not yet form a single tested production pipeline.
 

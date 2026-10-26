@@ -1,19 +1,17 @@
-# Research code provenance
+# Team research and source provenance
 
-The current repository presents a GPT-2 layer-merging investigation in two stages:
+This repository documents collaborative research on GPT-2 Transformer layer compression. **All experiments presented here are part of the team's joint research effort.** Folder names distinguish **methods**, not individual researchers, owners, or exclusive contributions.
 
-- [`r1-baselines/`](r1-baselines/) contains the initial GPT-2 direct-removal, weight-average, and fitted affine experiments, including a modularized package from the collaborative project.
-- [`r2-learned/Hiroyoshi/`](r2-learned/Hiroyoshi/) contains Hiroyoshi's nonlinear replacement-block experiments.
-- [`r2-learned/Amrita/`](r2-learned/Amrita/) contains Amrita's learned weight-merger notebooks and reported results.
+## Research stages
 
-**Source repository:** [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging). The source repository is left unchanged. The copied files were selected and renamed for navigation; their original development is credited to the researchers who produced them. GitHub commit attribution for the restructuring is distinct from original authorship of each experiment.
+- [R1 — Baselines and affine merging](r1-baselines/): direct layer removal, parameter averaging, and fitted affine approximations.
+- [R2 — Nonlinear merging](r2-learned/nonlinear-merge/): teacher-guided nonlinear replacement-block experiments, multi-step compression, and the final results.
+- [R2 — Learned weight-space merging](r2-learned/weight-merge/): learned weight corrections for adjacent block merging, notebooks, and experimental results.
 
-The initial baseline research is retained for its scientific context. Other researchers' separate experimental branches and unrelated reports have been omitted from the current working tree. Those historical sources remain available in the original collaborative repository and in the commit history of this repository.
+The code and results were collected from the team's collaborative source repository, [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging), and the team's research summaries. The original source repository has not been changed. Some files have been renamed and reorganized for clarity, but their technical content remains otherwise unchanged.
 
-### File naming
+The GitHub commit author identifies the maintainer who reorganized this repository; it does not indicate sole authorship of the research. Individual contribution records, when relevant, can be found in the original collaborative source history.
 
-- The initial baseline notebook is published as `r1-baselines/gpt2_affine_sweep.ipynb`.
-- The two main nonlinear notebooks are `r2-learned/Hiroyoshi/single_merge.ipynb` and `multi_merge.ipynb`.
-- The weight-merger notebooks and result documents are in `r2-learned/Amrita/`.
+## Final results artifact
 
-Reorganization does not imply a new independent study or that every file was written by the same researcher.
+The [final results PDF](r2-learned/nonlinear-merge/Final_Results.pdf) reproduces all numerical tables from the team's supplied one-page result sheet. The file is a **reformatted PDF recreation**, not a byte-for-byte copy of the uploaded document; the values, methods, compression levels, and reported PPLs are preserved.

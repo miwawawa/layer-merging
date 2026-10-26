@@ -1,0 +1,232 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 950 665] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 10615 >>
+stream
+BT /F2 19 Tf 0.10 0.14 0.20 rg 42.0 631.0 Td (GPT-2: Final Layer-Merging Results) Tj ET
+BT /F2 12 Tf 0.10 0.14 0.20 rg 42.0 607.0 Td (Reported PPL degradation \(%\) relative to the original GPT-2) Tj ET
+BT /F1 9 Tf 0.10 0.14 0.20 rg 42.0 590.0 Td (Comparison of four conditions over one to five adjacent-pair merges) Tj ET
+0.84 0.89 0.94 rg 42 553 850 20 re f
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 98.5 559.0 Td (Dataset) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 217.1 559.0 Td (Merged pairs) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 342.8 559.0 Td (Linear multiply) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 505.8 559.0 Td (Remove) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 638.5 559.0 Td (Average) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 772.8 559.0 Td (Nonlinear merge) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 539.0 Td (DBpedia) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 539.0 Td (1) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 365.6 539.0 Td (68.7%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 510.4 539.0 Td (4.0%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 643.1 539.0 Td (69.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 797.9 539.0 Td (4.1%) Tj ET
+0.95 0.96 0.98 rg 42 513 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 519.0 Td (DBpedia) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 519.0 Td (2) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 519.0 Td (117.6%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 519.0 Td (19.4%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 519.0 Td (184.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 519.0 Td (14.6%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 499.0 Td (DBpedia) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 499.0 Td (3) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 499.0 Td (250.1%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 499.0 Td (41.4%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 499.0 Td (395.2%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 499.0 Td (31.6%) Tj ET
+0.95 0.96 0.98 rg 42 473 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 479.0 Td (DBpedia) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 479.0 Td (4) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 479.0 Td (516.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 479.0 Td (86.0%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 479.0 Td (696.4%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 479.0 Td (61.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 459.0 Td (DBpedia) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 459.0 Td (5) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 459.0 Td (850.2%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 505.8 459.0 Td (174.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 638.5 459.0 Td (1271.1%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 459.0 Td (93.0%) Tj ET
+0.95 0.96 0.98 rg 42 433 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 439.0 Td (AG News) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 439.0 Td (1) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 365.6 439.0 Td (86.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 510.4 439.0 Td (2.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 643.1 439.0 Td (71.1%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 797.9 439.0 Td (2.4%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 419.0 Td (AG News) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 419.0 Td (2) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 419.0 Td (153.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 419.0 Td (21.2%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 419.0 Td (182.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 419.0 Td (22.0%) Tj ET
+0.95 0.96 0.98 rg 42 393 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 399.0 Td (AG News) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 399.0 Td (3) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 399.0 Td (308.1%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 399.0 Td (50.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 399.0 Td (381.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 399.0 Td (40.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 379.0 Td (AG News) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 379.0 Td (4) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 379.0 Td (662.2%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 505.8 379.0 Td (101.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 379.0 Td (635.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 379.0 Td (85.3%) Tj ET
+0.95 0.96 0.98 rg 42 353 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 98.5 359.0 Td (AG News) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 359.0 Td (5) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 361.0 359.0 Td (1083.3%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 505.8 359.0 Td (191.4%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 359.0 Td (998.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 793.3 359.0 Td (123.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 105.4 339.0 Td (IMDb) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 339.0 Td (1) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 365.6 339.0 Td (42.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 510.4 339.0 Td (3.4%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 643.1 339.0 Td (47.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 797.9 339.0 Td (3.0%) Tj ET
+0.95 0.96 0.98 rg 42 313 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 105.4 319.0 Td (IMDb) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 319.0 Td (2) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 365.6 319.0 Td (89.7%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 319.0 Td (14.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 319.0 Td (127.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 319.0 Td (12.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 105.4 299.0 Td (IMDb) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 299.0 Td (3) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 299.0 Td (182.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 299.0 Td (40.3%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 299.0 Td (258.1%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 299.0 Td (25.9%) Tj ET
+0.95 0.96 0.98 rg 42 273 850 20 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 105.4 279.0 Td (IMDb) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 279.0 Td (4) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 279.0 Td (392.1%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 508.1 279.0 Td (76.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 279.0 Td (440.9%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 279.0 Td (49.5%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 105.4 259.0 Td (IMDb) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 242.2 259.0 Td (5) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 363.3 259.0 Td (658.0%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 505.8 259.0 Td (128.8%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 640.8 259.0 Td (735.6%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 795.6 259.0 Td (77.5%) Tj ET
+0.20 0.26 0.32 RG 0.65 w
+42.0 253.0 m 42.0 573.0 l S
+187.0 253.0 m 187.0 573.0 l S
+302.0 253.0 m 302.0 573.0 l S
+452.0 253.0 m 452.0 573.0 l S
+587.0 253.0 m 587.0 573.0 l S
+722.0 253.0 m 722.0 573.0 l S
+892.0 253.0 m 892.0 573.0 l S
+42 573 m 892 573 l S
+42 553 m 892 553 l S
+42 533 m 892 533 l S
+42 513 m 892 513 l S
+42 493 m 892 493 l S
+42 473 m 892 473 l S
+42 453 m 892 453 l S
+42 433 m 892 433 l S
+42 413 m 892 413 l S
+42 393 m 892 393 l S
+42 373 m 892 373 l S
+42 353 m 892 353 l S
+42 333 m 892 333 l S
+42 313 m 892 313 l S
+42 293 m 892 293 l S
+42 273 m 892 273 l S
+42 253 m 892 253 l S
+BT /F2 12 Tf 0.10 0.14 0.20 rg 42.0 232.0 Td (Proposed model: selected merge plan and absolute PPL) Tj ET
+0.84 0.89 0.94 rg 42 198 850 21 re f
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 59.6 204.0 Td (Merged pairs) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 256.7 204.0 Td (Merge plan) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 453.0 204.0 Td (Param. reduction) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 583.4 204.0 Td (DBpedia PPL) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 695.4 204.0 Td (AG News PPL) Tj ET
+BT /F2 9.5 Tf 0.10 0.14 0.20 rg 815.8 204.0 Td (IMDb PPL) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 68.8 183.0 Td (Original) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 277.2 183.0 Td (-) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 478.1 183.0 Td (0.00%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 597.1 183.0 Td (30.99) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 709.1 183.0 Td (51.82) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 822.6 183.0 Td (37.20) Tj ET
+0.95 0.96 0.98 rg 42 156 850 21 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 84.7 162.0 Td (1) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 272.7 162.0 Td (1-2) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 478.1 162.0 Td (5.70%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 597.1 162.0 Td (32.27) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 709.1 162.0 Td (53.04) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 822.6 162.0 Td (38.31) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 84.7 141.0 Td (2) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 261.3 141.0 Td (1-2; 4-5) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 475.8 141.0 Td (11.39%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 597.1 141.0 Td (35.53) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 709.1 141.0 Td (63.19) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 822.6 141.0 Td (41.97) Tj ET
+0.95 0.96 0.98 rg 42 114 850 21 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 84.7 120.0 Td (3) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 249.9 120.0 Td (1-2; 4-5; 8-9) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 475.8 120.0 Td (17.09%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 597.1 120.0 Td (40.78) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 709.1 120.0 Td (72.98) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 822.6 120.0 Td (46.84) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 84.7 99.0 Td (4) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 238.5 99.0 Td (1-2; 4-5; 6-7; 8-9) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 475.8 99.0 Td (22.78%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 597.1 99.0 Td (50.07) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 709.1 99.0 Td (96.04) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 822.6 99.0 Td (55.63) Tj ET
+0.95 0.96 0.98 rg 42 72 850 21 re f
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 84.7 78.0 Td (5) Tj ET
+BT /F1 8.3 Tf 0.10 0.14 0.20 rg 229.7 78.0 Td (1-2; 4-5; 6-7; 8-9; 10-11) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 475.8 78.0 Td (28.48%) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 597.1 78.0 Td (59.81) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 706.8 78.0 Td (115.97) Tj ET
+BT /F1 9.5 Tf 0.10 0.14 0.20 rg 822.6 78.0 Td (66.03) Tj ET
+0.20 0.26 0.32 RG 0.65 w
+42.0 72.0 m 42.0 219.0 l S
+132.0 72.0 m 132.0 219.0 l S
+427.0 72.0 m 427.0 219.0 l S
+552.0 72.0 m 552.0 219.0 l S
+665.0 72.0 m 665.0 219.0 l S
+776.0 72.0 m 776.0 219.0 l S
+892.0 72.0 m 892.0 219.0 l S
+42 219 m 892 219 l S
+42 198 m 892 198 l S
+42 177 m 892 177 l S
+42 156 m 892 156 l S
+42 135 m 892 135 l S
+42 114 m 892 114 l S
+42 93 m 892 93 l S
+42 72 m 892 72 l S
+BT /F1 8 Tf 0.10 0.14 0.20 rg 42.0 38.0 Td (Source: uploaded Final_Results.pdf \(one-page experimental result table\). Recreated with identical numerical entries.) Tj ET
+BT /F1 8 Tf 0.10 0.14 0.20 rg 42.0 25.0 Td (The two methods in this research repository use separate evaluation protocols.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+11063
+%%EOF
