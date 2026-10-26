@@ -1,22 +1,48 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-.eggs/
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
 build/
 dist/
+*.egg-info/
+.eggs/
+
+# Testing / coverage
 .pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
 
-# Env (never commit real overrides)
+# Type checking / linting
+.mypy_cache/
+.pyre/
+.ruff_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Environment variables
 .env
+.env.*
 
-# Downloaded data + generated results (configurable via LAYER_MERGING_DATA_DIR / ARTIFACTS_DIR)
-data/
-artifacts/
-notebooks/data/
-notebooks/artifacts/
-
-# OS / editors
-.DS_Store
-.idea/
+# IDEs
 .vscode/
+.idea/

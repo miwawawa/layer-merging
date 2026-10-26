@@ -1,129 +1,162 @@
-# Layer Merging — MKA / CoM / SparC3 reproduced on MNIST
+# GPT-2 Layer Merging for Language Model Compression
 
-Reproduction of three model-compression papers on a small, from-scratch MLP
-(a CS 613 assignment):
+**Research question:** Can adjacent Transformer blocks be consolidated into fewer blocks while retaining useful next-token prediction performance, and can learned merging outperform simple layer removal?
 
-| Paper | Idea we reproduce |
+This repository documents a chronological experimental study of **GPT-2 Small (124M)**. We study redundant or overlapping transformations in adjacent Transformer blocks as a possible opportunity for **parameter reduction**, evaluating the resulting models primarily by **perplexity (PPL)**. Lower PPL is better.
+
+> **Key result:** At five adjacent-pair merge operations, two separately developed learned-merging methods each reduced the GPT-2 parameter count by **28.48%** (from **124,439,808 to 89,000,448** parameters), while showing **less PPL degradation than their respective removal baselines** on DBpedia-14, AG News, and IMDb. The two experimental protocols differ, so the methods should not be directly ranked against each other using their reported raw PPL.
+
+This is an ongoing **research investigation**, not a claim of state-of-the-art compression.
+
+## 1. Motivation
+
+Transformer layers can learn partially overlapping representations, raising the possibility of replacing several transformations with fewer computational blocks. Our objective is to reduce deployed model size while preserving model behavior.
+
+For a baseline and compressed model evaluated under the same protocol, we measure
+
+```text
+PPL degradation (%) = 100 × (PPL_compressed / PPL_original − 1)
+```
+
+A successful method should be evaluated against **direct layer removal at the same compression level**, not only against naive parameter averaging.
+
+| Experimental setting | Value |
 |---|---|
-| **MKA** (EMNLP 2024) — *Pruning via Merging* | fuse redundant layers with diffusion-map + Gaussian-NMI similarity (`α = S_lm`) |
-| **CoM** (CVPR 2026) — *Chain-of-Merging* | SLERP fusion + non-positional most-similar pair selection |
-| **SparC3** (2025) | LRP-attribution-guided pruning vs magnitude/random |
+| Model | GPT-2 Small, 12 Transformer blocks |
+| Original parameter count | 124,439,808 |
+| Compression | One to five merge operations (down to 7 blocks) |
+| Five-merge parameter count | 89,000,448 (−28.48%) |
+| Main model-development corpus | WikiText-2 |
+| External evaluation | DBpedia-14, AG News, IMDb |
+| Main metric | Perplexity (PPL) and percentage increase over the same experiment's original-model baseline |
 
-No libraries are re-trained here; merging and pruning are **training-free** and
-operate on plain MNIST models. See `docs/` for the paper summaries, the research
-survey (implementable vs ongoing research), and the assignment-guidelines check.
+## 2. Research chronology
 
----
+### Phase I — Baselines, affine approximations, and the strength of layer removal
 
-## Quick start (any machine, no repo layout knowledge assumed)
+We first tested all 11 neighboring GPT-2 layer pairs using:
 
-```bash
-# 1. clone + install
-git clone <your-repo-url> && cd layer-merging
-make setup            # pip install -r requirements.txt
-make env              # copies .env.example -> .env (optional overrides)
+- **Remove:** directly delete one block.
+- **Average:** average weights of adjacent blocks.
+- **Random-weight average:** randomized averaging as a control.
+- **Affine approximations / composition:** fit linear-affine maps to local hidden-state changes and compare averaging with composing fitted maps.
 
-# 2. fast verification (toy models, no MNIST download, < 1 min)
-make test             # 70+ pytest tests (currently 78)
-make smoke            # module-level smoke test
-make verify           # test + smoke — the pre-push gate
+**Results (validation PPL; lower is better):**
 
-# 3. full reproduction on MNIST (downloads under data/ via the configured mirror)
-make phases           # runs experiments/phase1..6b -> artifacts/
-make reproduce        # multi-seed evidence (mean ± std) for the report
-make run-notebooks    # proves the Colab notebooks execute end-to-end
-make report           # compiles paper/cs613_report.typ -> CS613_Layer_Merging_Report.pdf
+| Configuration | Validation PPL | Parameters reduced |
+|---|---:|---:|
+| Original GPT-2 | **29.65** | 0% |
+| Remove block 1 (0-indexed) | **30.95** | **5.70%** |
+| Best affine-average replacement (pair 6–7, 0-indexed) | 41.98 | 10.92% |
 
-# or everything at once:
-make run-all
-```
+The affine replacement changes the architecture more than simple block deletion; these rows have **different compression ratios** and are not a matched-size comparison.
 
-On failure at any step, the traceback names the exact module — open an issue.
-To override any parameter, edit `.env` (keys like `LAYER_MERGING_EPOCHS`) —
-every tunable lives in one place: `src/config/default.py`.
+**Findings and challenges**
 
----
+1. **Direct removal was unexpectedly strong.** Removing block 1 increased PPL only **4.4%**, making deletion a challenging baseline to surpass.
+2. **Naive merging was unstable.** Affine averaging outperformed affine multiplication for **9 of 11 pairs**, while random-weight averaging often produced extremely high PPL.
+3. **Local reconstruction error did not imply language-model fidelity.** On pair 1–2, affine multiplication achieved hidden-state MSE **0.841** but PPL **109.12**; averaging yielded MSE **24.599**, yet better PPL **54.46**.
+4. Compression lowered measured inference latency in this exploratory setup; performance on other hardware remains to be established.
 
-## How it works
+**Research direction established:** A replacement block must preserve the original model's behavior, rather than only minimizing weight distance or local hidden-state MSE. This motivated **learned, teacher-guided merging** in Phase II.
 
-```
-src/
-  config/default.py      # ONE source of truth for every parameter (.env aware)
-  data/mnist.py          # MNIST IDX loader (from scratch, no torchvision)
-  models/{base,mlp,residual_mlp}.py
-  similarity/            # diffusion map, Gaussian NMI, cosine (Strategy pattern)
-  merging/{uniform,weighted,slerp}.py + merger.py (Facade, greedy pair loop)
-  pruning/{lrp,importance,pruner}.py
-  evaluation/metrics.py  # accuracy, FLOPs, size, latency, sparsity, summarize()
-  training.py            # shared train loop (optimizer/loss from Config)
-  experiments/phase1..6b # the eight experiment phases + 2 ablations
-scripts/                 # smoke test, phase runner, multi-seed reproduce, notebooks
-tests/                   # pytest suite (unit + integration)
-notebooks/               # Colab-compatible per-phase notebooks
-docs/                    # paper draft, methodology, survey, rubric, guidelines
-```
+**Code:** [Phase I notebook](collaborative-code/Assignment1/NLP_Assignment.ipynb) · [Modular GPT-2 implementation](collaborative-code/Assignment1/gpt2_layer_merging/) · [Run instructions](collaborative-code/Assignment1/README.md)
 
-### The write-up lives in `docs/`
-- `paper.md` — the full paper draft (all numbers generated by this repo).
-- `approach.md` — our techniques, equations, and configuration in depth.
-- `other_approaches.md` — survey of alternative compression/merging approaches.
-- `papers/*.md` — the three assignment papers summarized; `research_survey.md`
-  separates implementable from ongoing research.
-- **`learning/` — study path: from first-principles math to paper numbers to
-  code** (`00_roadmap.md` → `01_math_primer.md` → paper calculation walk-throughs
-  `02/03/04` → related-work notes `05` → coding-concepts guide `06` → runnable
-  repo tour `07_code_tour.py`: `python docs/learning/07_code_tour.py`).
+### Phase II — Two learned approaches to multi-block compression
 
-### The eight phases (report results live in `artifacts/`)
-1. **Baseline** — train/load the residual MLP on MNIST (≈97.8%, 466,698 params)
-   + footprint snapshot (FLOPs, size, latency).
-2. **Similarity** — layer redundancy heatmaps (NMI vs cosine) → `similarity_all.png`.
-3. **Merging** — greedy α = S_lm fusion; per-merge pair/α evidence, accuracy-vs-
-   params curve → `merge_curve.png`.
-4. **Strategies** — weighted (MKA) vs uniform vs SLERP (CoM), one merge each →
-   `strategies.png`.
-4b. **α-ablation** — same pair at every α on the grid; pair choice > weight →
-   `alpha_sweep.png`.
-5. **Pruning** — LRP vs magnitude vs random sparsity sweep →
-   `pruning_curves.png`.
-6. **Pipeline** — two compression tracks (residual merging + plain LRP pruning)
-   with FULL before/after metrics → `results_table.png` + `final_results.csv`
-   + Gantt chart.
-6b. **Feasibility** — honest no-go evidence (merge collapses plain; LRP undefined
-   on residual) → `hybrid_tracks.png`.
+The second phase tested two distinct approaches against direct removal and other training-free baselines. Both evaluated models after **1–5** merge operations.
 
-### Evidence the report shows (what the reduction looks like)
-- **Merging**: 466,698 → 269,322 params (−42.3%), −42.2% FLOPs, 4→1 hidden
-  layers, 0.9775 → 0.9706 accuracy (>99% retention), per-merge α/S recorded.
-- **Pruning**: 50% sparsity at 75% retention (LRP), vs random 66% — LRP wins
-  everywhere, magnitude even higher on clean MNIST (honest nuance reported).
-- **α-ablation**: five α's land within ±0.0005 accuracy — pair choice dominates.
-- **Multi-seed mean ± std** for both tracks (`reproduce_table.png`).
+#### Approach A — Sequential nonlinear merging (Hiroyoshi)
 
-### Key finding
-MKA's merging is only safe in **residual** architectures (like transformers):
-the residual-stream redundancy is what makes fused layers near-lossless. A plain
-MLP collapses to ~4% after one merge — an honest negative result we report.
-LRP pruning is best on the **plain** graph (where attribution is exact).
+**Concept:** For adjacent transformations `Φ₁` and `Φ₂`, train a replacement Transformer block `M` so that `M(x) ≈ Φ₂(Φ₁(x))` and the final next-token distribution remains close to the original model.
 
----
+**Method**
 
-## Configuration / environment
+1. Evaluate **Remove, Average, LinearMultiply (affine), and NonlinearMultiply (trained replacement)**.
+2. Train only the newly merged block; freeze the other pretrained GPT-2 blocks.
+3. Optimize normalized hidden-state reconstruction error together with teacher–student **KL divergence**.
+4. Greedily select the next pair by WikiText-2 validation PPL; allow merging previously consolidated spans.
+5. Evaluate selected models on external datasets, not used in candidate selection.
 
-All knobs are dataclass fields in `src/config/default.py`. Values are overridable
-via `.env` or exported `LAYER_MERGING_<NAME>` variables (Python literals). The
-MNIST **download location** (`DATA_DIR`) and **mirror URL** (`MNIST_MIRROR`)
-are env-controlled, not global/assumed.
+The reported configuration uses **AdamW**, learning rate **3e−5**, **15 epochs**, context length **512**, distillation temperature **2**, and seed **42**.
 
-`data/` and `artifacts/` are anchored to the project root regardless of where
-you launch from.
+**PPL degradation versus original GPT-2** — removal vs. nonlinear merging:
 
----
+| Merged pairs | Parameters reduced | DBpedia-14 (Remove → Learned) | AG News (Remove → Learned) | IMDb (Remove → Learned) |
+|---:|---:|---:|---:|---:|
+| 1 | 5.70% | 4.0% → 4.1% | 2.9% → **2.4%** | 3.4% → **3.0%** |
+| 2 | 11.39% | 19.4% → **14.6%** | 21.2% → 22.0% | 14.9% → **12.8%** |
+| 3 | 17.09% | 41.4% → **31.6%** | 50.9% → **40.8%** | 40.3% → **25.9%** |
+| 4 | 22.78% | 86.0% → **61.5%** | 101.5% → **85.3%** | 76.8% → **49.5%** |
+| **5** | **28.48%** | **174.8% → 93.0%** | **191.4% → 123.8%** | **128.8% → 77.5%** |
 
-## Submission checklist (report + viva)
+At five merges, the trained model recorded PPL of **59.81 / 115.97 / 66.03** (DBpedia / AG News / IMDb), versus original-model PPL of **30.99 / 51.82 / 37.20** in this experiment.
 
-- [ ] `make run-all` green on a fresh machine
-- [ ] Screenshots: one per notebook step (Phase 1–6) into the PDF
-- [ ] Repository link inside the PDF
-- [ ] Team-contribution section at the end of the report
-- [ ] Gantt chart (`artifacts/gantt.png`) in the Project-Management section
+**Interpretation:** The learned replacement was not always best at one or two merges, but improved over direct removal on all three datasets at **three through five merges**. Greedy stage-wise search does not guarantee a globally optimal merge plan.
+
+**Implementation:** [One-layer experiments](collaborative-code/Assignment2/Hiroyoshi/Compress_1_layer_EN.ipynb) · [Two-to-five-layer experiments](collaborative-code/Assignment2/Hiroyoshi/Compress_2-5_layers_EN.ipynb)
+
+#### Approach B — Learned weight-space merging (Amrita)
+
+**Concept:** Train a **shared neural network in weight space** to generate a replacement from two adjacent pretrained blocks. Unlike Approach A, this method does not retrain a new replacement independently for each compression step.
+
+**Method**
+
+1. Start from the **drop-first** anchor (the second block's weights), with **zero-initialized** learned correction heads.
+2. Train a shared weight generator on teacher-guided losses, including normalized hidden-state error, KL divergence, and a correction regularizer.
+3. Score original non-overlapping neighboring pairs on held-out data, applying a guard that rejects changes that do not improve over the deletion anchor.
+4. Select compatible non-overlapping pairs and evaluate complete compressed models.
+
+The weight-merger network is an **offline generation tool**; its parameters are not deployed in the resulting compressed GPT-2.
+
+**PPL degradation versus original GPT-2** — drop-first vs. learned merging:
+
+| Merged pairs | Parameters reduced | DBpedia-14 (Drop → Learned) | AG News (Drop → Learned) | IMDb (Drop → Learned) |
+|---:|---:|---:|---:|---:|
+| 1 | 5.70% | 2.9% → **0.1%** | **6.3%** → 6.6% | 3.8% → **3.2%** |
+| 2 | 11.39% | 17.8% → **9.3%** | **23.1%** → 24.9% | 19.8% → **14.7%** |
+| 3 | 17.09% | 42.8% → **25.0%** | 46.3% → **44.5%** | 38.0% → **30.2%** |
+| 4 | 22.78% | 91.0% → **48.1%** | 100.4% → **79.6%** | 76.0% → **54.8%** |
+| **5** | **28.48%** | **163.9% → 74.1%** | **178.8% → 123.0%** | **145.3% → 84.9%** |
+
+At five merges, learned PPL was **70.41 / 139.15 / 68.23**, versus uncompressed baseline PPL of **40.44 / 62.40 / 36.90** in this separate experiment. Its five selected original-layer pairs (1-indexed) were **2–3, 4–5, 7–8, 9–10, and 11–12**.
+
+**Interpretation:** The learned weight generator improved over its removal baseline on all three datasets at **three through five merges**. Pair selection uses a single-pair cost proxy and does not guarantee the best combined multi-pair PPL.
+
+**Implementation and results:** [Amrita's notebooks](collaborative-code/Assignment2/Amrita/) · [Detailed results PDF](collaborative-code/Assignment2/Amrita/Comp_results.pdf) · [CSV results](collaborative-code/Assignment2/Amrita/all_results.csv)
+
+### A note about comparing these approaches
+
+**Approach A and Approach B are not evaluated under identical protocols.** They differ in data sampling, test token budgets, pair selection, and model construction. Compare each approach with **its own original GPT-2 baseline and removal control**; avoid directly ranking the two by their absolute PPL values.
+
+## 3. Main research insights
+
+- **Strong deletion baselines:** At low compression, removing a well-chosen Transformer block can outperform naive parameter merging.
+- **Model-level objectives matter:** Small local MSE is not sufficient to predict full-model PPL.
+- **Learned merging helps at higher compression:** Both approaches improve over their own removal baselines across all three external datasets at 3–5 merges.
+- **Compression still has a cost:** Neither learned method fully preserves original GPT-2 performance at five merges, even though both outperform their removal controls.
+- **Reproducibility and generalization are open:** Matched test protocols, additional model families, and hardware benchmarks are required.
+
+## 4. Next research directions
+
+1. Measure representation similarity and causal importance to identify mergeable adjacent layers.
+2. Improve optimization objectives, initialization, and teacher-guided post-merge training.
+3. Replace greedy selection and pairwise proxies with methods accounting for interactions between merges.
+4. Test across models and standardized evaluation contexts; analyze PPL versus compression, speed, and memory.
+5. Aim to consistently **surpass direct layer removal at equal parameter reduction**.
+
+## 5. Code and research materials
+
+The main research materials are organized under [`collaborative-code/`](collaborative-code/), retaining the source authors' project structure:
+
+| Stage | Location |
+|---|---|
+| Initial GPT-2 analysis | [Assignment1](collaborative-code/Assignment1/) |
+| Sequential nonlinear merging | [Assignment2/Hiroyoshi](collaborative-code/Assignment2/Hiroyoshi/) |
+| Learned weight-space merging | [Assignment2/Amrita](collaborative-code/Assignment2/Amrita/) |
+| Additional collaborators' experiments | [Assignment2](collaborative-code/Assignment2/) |
+| Source history and attribution | [PROVENANCE.md](PROVENANCE.md) |
+
+The code originated from the collaborative repository [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging); the original remains unchanged. The present README focuses on the chronological GPT-2 work and the two detailed experiments described above. Notebooks are experimental research artifacts; a unified, end-to-end tested reproduction command is not yet provided.
+
+**Research status:** Ongoing investigation into lightweight Transformer language models.

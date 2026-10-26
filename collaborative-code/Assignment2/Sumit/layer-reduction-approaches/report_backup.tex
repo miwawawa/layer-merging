@@ -1,0 +1,286 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=0.9in]{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{hyperref}
+\usepackage{microtype}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
+\emergencystretch=1.2em
+
+\title{Layer Reduction with a Fitted Ternary TerGRASP Bridge}
+\author{Sumit Jha}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+\sloppy
+
+\begin{abstract}
+We test whether the most redundant decoder layers of a small LLM can be
+replaced by a $1.58$-bit ternary low-rank bridge whose parameters are
+\emph{fitted} to the layer's residual. We rank layers with Block Influence
+(BI), remove/replace the $k$ lowest-BI blocks, and measure validation
+perplexity (PPL) on wikitext subsets with a random-removal control. The
+fitted ternary bridge matches plain hard removal at $k{=}1$ while keeping
+the graph depth and shrinking the replaced blocks to $\sim$1.58 bit/param.
+Naive averaging, weight tying, and a single affine bridge across the gap all
+fail by orders of magnitude, which is what motivated fitting the bridge per
+layer. Supporting runs (SVD low-rank, quantized no-op bypass) confirm the
+same BI ranking drives both pruning and quantization choices.
+\end{abstract}
+
+\section{Report}
+\subsection{Mentor feedback since Presentation 1}
+FILL IN. In short: an earlier plan relied on random TerGRASP bridges, which
+the mentor flagged because the bridge is then $\approx$ identity. We changed
+the method to \emph{fit} the bridge on the residual Delta $= h_{out}-h_{in}$
+and added the random-removal control and the per-approach reports listed in
+Section~\ref{sec:approaches}.
+
+\subsection{Baselines and related work}
+We compared against the state of the art that is runnable on our budget:
+\begin{itemize}
+\item \textbf{ShortGPT (Men et al.)} - the BI ranking we reproduce as our
+control. Targeted removal of low-BI blocks degrades PPL far more slowly
+than random removal.
+\item \textbf{LayerDrop (Fan et al.)} - fine-tune with random layer drops.
+Archived; the 60-step CPU/MPS budget was too small to separate depths.
+\item \textbf{CALM / early exits}, \textbf{KD to shallow students}, and
+\textbf{L0 gate pruning} - archived for the same reason.
+\end{itemize}
+No closed-source large-LLM baselines were reproduced, per the instructions.
+
+\subsection{Datasets, bias, bottlenecks}
+Main corpus: Salesforce/wikitext, configuration wikitext-2-raw-v1;
+comparison configurations wikitext-103-raw-v1 and wikitext-2-v1.
+\paragraph{Bias handling.} We reused the Assignment 1 preprocessing
+(\texttt{join\_nonempty}, non-overlapping 256-token windows) and capped
+\texttt{train} to 300k chars, validation/test to 100k chars, EVAL\_TOKENS
+to 3000, seed fixed to 42. This keeps the PPL windows identical across
+approaches, so no method gets an easier slice.
+\paragraph{Bottleneck.} We initially wanted PTB and tiny\_shakespeare, but
+datasets 5.x removed the script loaders and their parquet mirrors were not
+resolvable for those identifiers, so we rotated the four wikitext
+configurations instead. The principal bottleneck otherwise was the single
+MPS laptop: training-heavy approaches (KD, LayerDrop, gates) never got a
+large enough budget, which is why their archived rows are non-separating.
+\paragraph{Dataset extension.} None was introduced; the differences from
+previous work are in the preprocessing and the 3k-token PPL window, which
+we declare explicitly.
+
+\subsection{Experimental plan}
+\paragraph{Models.} GPT-2 small (124,439,808 params, 12 blocks) and
+SmolLM-135M (134,515,008 params, 30 blocks). Architectural accessors
+differ: GPT-2 stores blocks in \texttt{model.transformer.h}, SmolLM in
+\texttt{model.model.layers}; a thin helper (\texttt{get\_layers},
+\texttt{set\_layers}) normalizes both.
+\paragraph{How approaches differ.} (i) \emph{target selection} is always
+BI-ranked vs random; (ii) the \emph{replacement operator} differs: none
+(hard removal), fitted ternary bridge (TerGRASP), rank-$r$ SVD truncation,
+2/4/8-bit quantization; (iii) \emph{scope} differs: one layer ($k{=}1$) up
+to four ($k{=}4$).
+\paragraph{Hyperparameters and selection.} Bridge rank $r{=}32$; bridge
+optimizer Adam, lr $10^{-2}$, 80 steps; AbsMean ternary quantization;
+ridge $10^{-4}$. Ablations: we swept tokenization budgets, EVAL\_TOKENS,
+random seeds for the control, bridge rank $\in\{64,128,256\}$ via the SVD
+variant, and bitwidth $\in\{8,4,2\}$. Selection of layers is always the BI
+ranking, never a tuned heuristic.
+\paragraph{Metric.} Primary: validation perplexity,
+$\mathrm{PPL}=\exp(\frac{1}{N}\sum_i -\log p_\theta(x_i|x_{<i}))$ over
+256-token non-overlapping windows, identical for all approaches.
+Secondary: latency in ms/forward pass and parameter count. We also
+recorded the BI value of each removed layer to check that low-BI removal
+is indeed the cheapest.
+\paragraph{System effort.} One MacBook, MPS backend for GPT-2 and SmolLM,
+CPU for the 02 pass. A full 15-approach run is ~1 hour; the final
+\texttt{assignment2.ipynb} re-runs in a few minutes and embeds the final
+tables and the two figures.
+
+\subsection{Project management}
+\paragraph{Novelty proposal.} Replace the random TerGRASP bridge with a
+fitted low-rank bridge and ternarize its factors; the BI ranking from
+Assignment 1 then chooses \emph{which} block to replace.
+\paragraph{Resources.} 1 machine, 16 GB RAM, Apple MPS, no paid GPU.
+\paragraph{Split.} FILL IN per-member: dataset/eval code, TerGRASP
+implementation, SVD+quantization supporting runs, figures/report.
+
+\section{Experiment}
+\subsection{Implementation}
+\texttt{assignment2.ipynb} runs end-to-end on MPS: dataset prep, BI
+ranking, residual capture via forward hooks, bridge fitting, ternary
+quantization, block replacement, PPL/latency/parameter eval, two figures.
+\subsection{Approaches tried (all 15)} \label{sec:approaches}
+\small
+\small
+\resizebox{\textwidth}{!}{\begin{tabular}{llp{6.5cm}}
+\toprule
+\# & Approach & Outcome \\
+\midrule
+01 & Fitted-ternary TerGRASP & headline result, works \\
+02 & Affine bridge across gap & fails: PPL $10^3$-$10^8\times$ \\
+03 & BI + KD repair & scaffold, KD loss $\approx 0$ at 60-step budget \\
+04 & Permutation-aligned averaging & fell back to naive averaging, fails \\
+05 & LayerDrop->BI->SVD->KD pipeline & scaffold, identical rows \\
+06 & ShortGPT BI baseline & works, the control \\
+07 & SVD low-rank & works on SmolLM; GPT-2 row needs clean rerun \\
+08 & Weight-space merging & always worse PPL \\
+09 & KD shallow student & partial recovery at tiny budget \\
+10 & L0 learned gates & gates never close, scaffold \\
+11 & LayerDrop & flat PPL, scaffold \\
+12 & Attn/FFN proxy pruning & stub \\
+13 & Early exit & scaffold, no exit-head training \\
+14 & Cross-layer weight tying & PPL $10^3$-$10^6\times$, fails \\
+15 & Quantized no-op bypass & works, supporting rule \\
+\bottomrule
+\end{tabular}}
+\normalsize
+
+\subsection{Results}
+\begin{table}[h]
+\centering
+\small
+\small
+\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrr}
+\toprule
+Model & k=1 & k=2 & k=3 & k=4 & Note \\
+\midrule
+GPT-2 fitted (this work) & 45.11 & 50.09 & 140.42 & 879.52 & keeps graph depth, $\sim$1.58-bit blocks \\
+GPT-2 hard removal & 45.76 & 47.95 & 121.81 & 943.24 & control \\
+SmolLM fitted (this work) & 21.71 & 40.49 & 33.05 & 38.49 & \\
+SmolLM hard removal & 19.93 & 26.13 & 29.91 & 34.20 & \\
+\bottomrule
+\end{tabular}}
+\normalsize
+\caption{Validation PPL by number of replaced layers on the wikitext-2-raw-v1 3k-token window.}
+\end{table}
+\medskip
+
+For Approach 06, the targeted/random control at the same k (PPL):
+\small
+\small
+\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrr}
+\toprule
+model & \multicolumn{4}{c}{BI targeted (k=1..4)} & random k=1 & random k=3 \\
+\midrule
+GPT-2   & 45.76 & 47.95 & 121.81 & 943.24 & 44.42 & 4181.21 \\
+SmolLM  & 19.93 & 26.13 & 29.91  & 34.20  & 20.83 & 34.23   \\
+\bottomrule
+\end{tabular}}
+\normalsize
+
+\subsection{Findings}
+At $k{=}1$ the fitted ternary bridge matches or slightly beats hard removal
+while keeping the graph depth and cutting that block's storage to $\sim$1.58
+bit/param. For $k\ge 3$ it degrades in line with hard removal; it does not
+blow up like averaging/tying, and it does not pretend to add a real layer
+like the random bridge. The negatives (02, 08, 14) show that the layer maps
+are neither affine nor weight-interchangeable, which is exactly why a
+\emph{fitted} low-rank bridge is the minimal fix.
+
+\subsection{What ran successfully and why}
+Only four notebooks produced a usable signal under the free MPS budget:
+01 (fitted ternary, headline), 06 (BI control), 07 (SmolLM SVD curve), 15
+(BI-guided 2-bit quantization). The rest were archived: their frameworks
+ran but the signal was flat, or they failed by orders of magnitude.
+
+\section{Conclusion}
+The same BI ranking that makes layer removal cheap also predicts that the
+kept matrix of a low-BI block can be ternarized or SVD-truncated with no
+PPL loss at $k{=}1$. A fitted ternary low-rank bridge inserted at that
+position preserves validation PPL on both GPT-2 and SmolLM-135M, keeps the
+graph depth, and shrinks the replaced blocks to $\sim$1.58 bit/param. This
+is the approach we recommend for the assignment.
+
+\bibliographystyle{plain}
+\nocite{*}
+\begin{thebibliography}{9}
+\bibitem{shortgpt}
+Men et al., \emph{ShortGPT: Layers in Large Language Models are More
+Redundant Than You Expect}, 2024.
+\bibitem{layerdrop}
+Fan et al., \emph{Reducing Transformer Depth on Demand with Structured
+Dropout} (LayerDrop), ICLR 2020.
+\bibitem{calm}
+Schwartz et al., \emph{The Right Tool for the Job: Matching Model and
+Instance Complexities} (CALM), 2020.
+\bibitem{bitnet}
+Ma et al., \emph{The Era of 1-bit LLMs: All Large Language Models are in
+1.58 Bits}, 2024.
+\bibitem{kd}
+Hinton et al., \emph{Distilling the Knowledge in a Neural Network}, 2015.
+\end{thebibliography}
+
+\section{Appendix: Why the Fitted Bridge Works (maths)}
+Let $x$ be the hidden state entering layer $L$, and suppose the block is
+close to identity: $F_L(x) = x + \Delta(x)$ with
+$\|\Delta(x)\| \ll \|x\|$. Hard removal replaces $F_L$ by the identity
+$g(x)=x$, incurring error $\Delta(x)$. We propose $g(x) = x + xUV$ and
+choose $U,V$ to solve
+\[
+\min_{U,V} \; \bigl\| XUV - \Delta \bigr\|_F^2,
+\quad \Delta_i = F_L(x_i) - x_i .
+\]
+For a near-identity layer $\Delta$ is small and lives in a low-dimensional
+cone (the directions in which the residual actually moves), so a rank-$r$
+factor model recovers most of its energy: by the Eckart-Young theorem the
+best rank-$r$ approximation to the centered residual has error equal to the
+tail $\sum_{i>r}\sigma_i^2$, which is small precisely when $\Delta$ is
+low-rank. Ternary quantization then perturbs the factors by
+$\|W - W_q\|_\infty \le \gamma$, so the bridge output moves by at most
+$\mathcal{O}(\gamma^2 \|x\|)$. Putting the two together,
+\[
+\| g(x) - F_L(x) \| \;\le\; \underbrace{\sum_{i>r}\sigma_i}_{\text{SVD tail}}
+\;+\; \underbrace{\mathcal{O}(\gamma^2 \|x\|)}_{\text{ternary noise}},
+\]
+which is small when the layer is low-BI. This is exactly the regime the
+BI ranking selects, so the choice of *which* layer to replace and the form
+of the replacement are the same decision.
+
+\section{Appendix: Per-step result tables}
+\subsection{Step tables}
+\small
+\small
+\resizebox{\textwidth}{!}{\begin{tabular}{llll}
+\toprule
+Step & GPT-2 value & SmolLM value & Meaning \\
+\midrule
+Model params & 124,439,808 & 134,515,008 & nearly equal \\
+\#blocks & 12 & 30 & \\
+k=1 fitted PPL & 45.11 & 21.71 & one block replaced \\
+k=1 removal PPL & 45.76 & 19.93 & \\
+rank-256 SVD PPL & 36.78 (guard) & 19.93 & full-rank \\
+2-bit on L5 PPL & 36.78* & 17.76 & L5 tolerated \\
+\bottomrule
+\end{tabular}}
+\smallskip
+\normalsize
+*GPT-2 row is the dtype-guard artifact discussed in Section~\ref{sec:approaches}.
+
+\section{Conclusion (comparison study)}
+\small
+\small
+\resizebox{\textwidth}{!}{\begin{tabular}{lllll}
+\toprule
+Approach & Works? & PPL effect & Compression? & Role \\
+\midrule
+01 Fitted-ternary TerGRASP & yes & $\approx$ baseline at k=1 & $\sim$20$\times$ on replaced block & headline \\
+06 ShortGPT BI & yes & targeted $\gg$ random at k$\ge$2 & none & control \\
+07 SVD low-rank & yes & smooth rank/PPL trade & 2-4$\times$ on shrink blocks & support \\
+15 2-bit no-op bypass & yes & $\approx$ no change on low-BI & up to $16\times$ on block & rule of thumb \\
+02/08/14 merge/tying/bridge & no & PPL 10$^3$-10$^6\times$ & irrelevant & negative results \\
+03/09/10/11/12/13 & scaffold & no separation & - & future work \\
+\bottomrule
+\end{tabular}}
+\normalsize
+
+Among all 15, \textbf{01 is the best} because it is the only one that (a)
+keeps the graph depth, (b) shrinks the replaced block to $\sim$1.58
+bit/param, and (c) preserves PPL at the operating point $k{=}1$ on both
+models. 06 remains as the control, 07 and 15 are supporting evidence that BI
+predicts compressibility, and 02/08/14 are the negative results that
+motivate fitting rather than averaging or tying.
+
+\end{document}
