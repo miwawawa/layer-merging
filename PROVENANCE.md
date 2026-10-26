@@ -1,23 +1,19 @@
-# Source provenance and collaborator credit
+# Research code provenance
 
-This repository focuses on the GPT-2 layer-merging research. The `collaborative-code/` directory preserves the folder organization and file authorship labels of work copied from [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging). The source repository is not modified.
+The current repository presents a GPT-2 layer-merging investigation in two stages:
 
-Source: https://github.com/sumitjhaa/gpt2-layermerging
-Original source branch: `main`; source tree at preparation: `70a05267b48cf6f3f7e29c0b7bcbc9dc901c3cf9`.
+- [`r1-baselines/`](r1-baselines/) contains the initial GPT-2 direct-removal, weight-average, and fitted affine experiments, including a modularized package from the collaborative project.
+- [`r2-learned/Hiroyoshi/`](r2-learned/Hiroyoshi/) contains Hiroyoshi's nonlinear replacement-block experiments.
+- [`r2-learned/Amrita/`](r2-learned/Amrita/) contains Amrita's learned weight-merger notebooks and reported results.
 
-Please retain credit to the original researchers and notebook authors. A GitHub commit by `miwawawa` documents this repository's organization; it does not imply that every file was originally written by that GitHub account.
+**Source repository:** [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging). The source repository is left unchanged. The copied files were selected and renamed for navigation; their original development is credited to the researchers who produced them. GitHub commit attribution for the restructuring is distinct from original authorship of each experiment.
 
-## Research implementations
+The initial baseline research is retained for its scientific context. Other researchers' separate experimental branches and unrelated reports have been omitted from the current working tree. Those historical sources remain available in the original collaborative repository and in the commit history of this repository.
 
-- **Hiroyoshi:** sequential, nonlinear teacher-guided GPT-2 block merger, in `collaborative-code/Assignment2/Hiroyoshi/`.
-- **Amrita:** learned weight-space merging, in `collaborative-code/Assignment2/Amrita/`.
-- **Other collaborators:** research notebooks and reports remain under their original directories (Lingala, Satvik, Sravan, Sumit).
-- **Initial study:** affine and direct GPT-2 baselines under `collaborative-code/Assignment1/`.
+### File naming
 
-Notebooks can contain saved outputs, cache metadata, and exploratory cells. Treat the code as research artifacts rather than a single integrated, fully tested production package.
+- The initial baseline notebook is published as `r1-baselines/gpt2_affine_sweep.ipynb`.
+- The two main nonlinear notebooks are `r2-learned/Hiroyoshi/single_merge.ipynb` and `multi_merge.ipynb`.
+- The weight-merger notebooks and result documents are in `r2-learned/Amrita/`.
 
-## Source completeness
-
-The source file `Assignment2/Lingala/NLP_Assignment2.ipynb` (~5.3 MB) could not be copied through the connected interface. It remains accessible at [the original repository](https://github.com/sumitjhaa/gpt2-layermerging/blob/main/Assignment2/Lingala/NLP_Assignment2.ipynb). All other non-system files from the source tree were copied.
-
-Some results described in the README were originally supplied as separate research reports outside the collaborator's GitHub repository; the main README records their findings, but those standalone attachments are not represented as uploaded files here.
+Reorganization does not imply a new independent study or that every file was written by the same researcher.

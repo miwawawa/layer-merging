@@ -60,7 +60,7 @@ The affine replacement changes the architecture more than simple block deletion;
 
 **Research direction established:** A replacement block must preserve the original model's behavior, rather than only minimizing weight distance or local hidden-state MSE. This motivated **learned, teacher-guided merging** in Phase II.
 
-**Code:** [Phase I notebook](collaborative-code/Assignment1/NLP_Assignment.ipynb) · [Modular GPT-2 implementation](collaborative-code/Assignment1/gpt2_layer_merging/) · [Run instructions](collaborative-code/Assignment1/README.md)
+**Code:** [Phase I notebook](r1-baselines/gpt2_affine_sweep.ipynb) · [Modular GPT-2 implementation](r1-baselines/gpt2_layer_merging/) · [Run instructions](r1-baselines/README.md)
 
 ### Phase II — Two learned approaches to multi-block compression
 
@@ -94,7 +94,7 @@ At five merges, the trained model recorded PPL of **59.81 / 115.97 / 66.03** (DB
 
 **Interpretation:** The learned replacement was not always best at one or two merges, but improved over direct removal on all three datasets at **three through five merges**. Greedy stage-wise search does not guarantee a globally optimal merge plan.
 
-**Implementation:** [One-layer experiments](collaborative-code/Assignment2/Hiroyoshi/Compress_1_layer_EN.ipynb) · [Two-to-five-layer experiments](collaborative-code/Assignment2/Hiroyoshi/Compress_2-5_layers_EN.ipynb)
+**Implementation:** [One-layer experiments](r2-learned/Hiroyoshi/single_merge.ipynb) · [Two-to-five-layer experiments](r2-learned/Hiroyoshi/multi_merge.ipynb)
 
 #### Approach B — Learned weight-space merging (Amrita)
 
@@ -123,7 +123,7 @@ At five merges, learned PPL was **70.41 / 139.15 / 68.23**, versus uncompressed 
 
 **Interpretation:** The learned weight generator improved over its removal baseline on all three datasets at **three through five merges**. Pair selection uses a single-pair cost proxy and does not guarantee the best combined multi-pair PPL.
 
-**Implementation and results:** [Amrita's notebooks](collaborative-code/Assignment2/Amrita/) · [Detailed results PDF](collaborative-code/Assignment2/Amrita/Comp_results.pdf) · [CSV results](collaborative-code/Assignment2/Amrita/all_results.csv)
+**Implementation and results:** [Amrita's notebooks](r2-learned/Amrita/) · [Detailed results PDF](r2-learned/Amrita/weight_merge_results.pdf) · [CSV results](r2-learned/Amrita/weight_merge_results.csv)
 
 ### A note about comparing these approaches
 
@@ -145,18 +145,20 @@ At five merges, learned PPL was **70.41 / 139.15 / 68.23**, versus uncompressed 
 4. Test across models and standardized evaluation contexts; analyze PPL versus compression, speed, and memory.
 5. Aim to consistently **surpass direct layer removal at equal parameter reduction**.
 
-## 5. Code and research materials
+## 5. Repository layout and reproducibility
 
-The main research materials are organized under [`collaborative-code/`](collaborative-code/), retaining the source authors' project structure:
+The two research stages are organized by method:
 
-| Stage | Location |
+| Stage | Code and results |
 |---|---|
-| Initial GPT-2 analysis | [Assignment1](collaborative-code/Assignment1/) |
-| Sequential nonlinear merging | [Assignment2/Hiroyoshi](collaborative-code/Assignment2/Hiroyoshi/) |
-| Learned weight-space merging | [Assignment2/Amrita](collaborative-code/Assignment2/Amrita/) |
-| Additional collaborators' experiments | [Assignment2](collaborative-code/Assignment2/) |
-| Source history and attribution | [PROVENANCE.md](PROVENANCE.md) |
+| **R1 — Baselines and affine replacement** | [`r1-baselines/`](r1-baselines/) — direct deletion, averaging, fitted affine maps, adjacent-pair sweeps, [detailed README](r1-baselines/README.md) |
+| **R2A — Nonlinear replacement blocks** | [`r2-learned/Hiroyoshi/`](r2-learned/Hiroyoshi/) — one- and multi-merge teacher-guided notebooks |
+| **R2B — Learned weight merger** | [`r2-learned/Amrita/`](r2-learned/Amrita/) — weight-merger notebooks, [results PDF](r2-learned/Amrita/weight_merge_results.pdf), and CSV |
+| **Detailed R2 findings** | [`r2-learned/README.md`](r2-learned/README.md) |
+| **Original code attribution** | [`PROVENANCE.md`](PROVENANCE.md) |
 
-The code originated from the collaborative repository [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging); the original remains unchanged. The present README focuses on the chronological GPT-2 work and the two detailed experiments described above. Notebooks are experimental research artifacts; a unified, end-to-end tested reproduction command is not yet provided.
+The original research materials were sourced from the collaborative repository [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging). The source remains unchanged. Only the initial baseline code and the learned approaches by Hiroyoshi and Amrita are retained here.
+
+The notebooks are research artifacts. The R1 package includes a run script; the R2 notebooks require individual GPU setups and do not yet form a single tested production pipeline.
 
 **Research status:** Ongoing investigation into lightweight Transformer language models.
