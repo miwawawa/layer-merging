@@ -157,7 +157,7 @@ The two research stages are organized by method:
 | **Detailed R2 findings** | [`r2-learned/README.md`](r2-learned/README.md) |
 | **Original code attribution** | [`PROVENANCE.md`](PROVENANCE.md) |
 
-The research was conducted collaboratively by the project team. The repository preserves the baseline study and two selected learned-merging methods; the method-based folders do not indicate individual ownership. The source code archive [sumitjhaa/gpt2-layermerging](https://github.com/sumitjhaa/gpt2-layermerging) remains unchanged.
+The research was conducted collaboratively by the project team.
 
 The notebooks are research artifacts. The R1 package includes a run script; the R2 notebooks require individual GPU setups and do not yet form a single tested production pipeline.
 
